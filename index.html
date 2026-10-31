@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoiceLinguist AI Agent - تفريغ الأصوات والملفات وتصحيح الهمزات</title>
+    <title>VoiceLinguist AI Agent - حل مشكلة التكرار نهائياً</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -40,11 +40,11 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">VoiceLinguist AI Pro</h1>
-                    <p class="text-xs text-slate-400">التفريغ الصوتي مع تنسيق الهمزات والملفات</p>
+                    <p class="text-xs text-slate-400">التفريغ الصوتي الخالي من التكرار</p>
                 </div>
             </div>
             <span class="text-xs px-3 py-1 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300 font-medium">
-                v4.5 Stable + Features
+                v4.6 Original + Features
             </span>
         </div>
     </header>
@@ -65,7 +65,7 @@
             <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-700/80">
                 <div class="flex items-center gap-3">
                     <span class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold">1</span>
-                    <h2 class="text-lg font-bold text-white">القسم الأول: تفريغ الصوت والملفات</h2>
+                    <h2 class="text-lg font-bold text-white">القسم الأول: تفريغ الصوت (بدون تكرار نهائياً)</h2>
                 </div>
                 <span id="sttBadge" class="text-xs px-2.5 py-1 rounded-md bg-slate-700 text-slate-300">جاهز للتسجيل</span>
             </div>
@@ -90,15 +90,15 @@
                     </div>
                 </div>
 
-                <!-- الخاصية الجديدة: رفع ملف صوتي جاهز للتفريغ -->
-                <div class="bg-slate-900/60 border border-slate-700/80 rounded-xl p-3.5 space-y-2">
+                <!-- إضافة خيار رفع ملف صوتي جاهز بشكل مستقل ومنفصل تماماً -->
+                <div class="bg-slate-900/60 border border-slate-700/80 rounded-xl p-3 space-y-1.5">
                     <label class="block text-xs font-semibold text-cyan-300">
-                        <i class="fa-solid fa-file-audio ml-1"></i> رفع ملف صوتي جاهز لتفريغه:
+                        <i class="fa-solid fa-file-audio ml-1"></i> خيار إضافي: رفع ملف صوتي جاهز للاستماع والتفريغ:
                     </label>
-                    <input type="file" id="sttAudioFileInput" accept="audio/*, .mp3, .wav, .m4a" onchange="transcribeAudioFile(event)" class="block w-full text-xs text-slate-400 file:mr-4 file:ml-4 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-300 hover:file:bg-blue-600/30 cursor-pointer">
+                    <input type="file" id="externalAudioFile" accept="audio/*, .mp3, .wav, .m4a" onchange="playExternalAudioFile(event)" class="block w-full text-xs text-slate-400 file:mr-4 file:ml-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-300 hover:file:bg-blue-600/30 cursor-pointer">
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                     <button id="startBtn" onclick="startSTT()" class="flex items-center justify-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-3 px-4 rounded-xl transition shadow-lg shadow-cyan-600/20 active:scale-95">
                         <i class="fa-solid fa-microphone"></i>
                         <span>بدء التسجيل</span>
@@ -120,10 +120,10 @@
                         <label class="text-xs font-semibold text-slate-400">النص المفرغ:</label>
                         <button onclick="clearTranscript()" class="text-xs text-slate-400 hover:text-red-400 transition"><i class="fa-solid fa-trash-can ml-1"></i> مسح النص</button>
                     </div>
-                    <textarea id="sttOutput" class="w-full h-32 bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition leading-relaxed resize-y" placeholder="سيظهر النص المكتوب هنا تلقائياً أثناء حديثك أو عند رفع ملف صوتي..."></textarea>
+                    <textarea id="sttOutput" class="w-full h-32 bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition leading-relaxed resize-y" placeholder="سيظهر النص المكتوب هنا تلقائياً أثناء حديثك..."></textarea>
                 </div>
 
-                <!-- أزرار الإجراءات (تعديل الهمزات، وتصدير Word، وإرسال للنص الثاني) -->
+                <!-- أزرار التحكم: تعديل الهمزات، وتصدير Word، وإرسال للنص الثاني -->
                 <div class="flex flex-wrap gap-3 pt-2">
                     <button onclick="formatArabicTextOnly()" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 px-4 rounded-xl transition shadow-lg shadow-purple-600/20 active:scale-95 text-sm">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -213,7 +213,7 @@
                         <i class="fa-solid fa-circle-check text-base"></i> تم توليد وقراءة النص، وتجهيز المقطع للتحميل بنجاح!
                     </p>
                     <audio id="exportAudioPlayer" controls class="w-full h-10 rounded-lg"></audio>
-                    <a id="downloadAudioBtn" download="VoiceLinguist_Generated_Audio.wav" class="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl transition text-xs shadow-md">
+                    <a id="downloadAudioBtn" download="VoiceLinguist_Output.wav" class="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl transition text-xs shadow-md">
                         <i class="fa-solid fa-download"></i>
                         <span>تحميل المقطع الصوتي (Audio File)</span>
                     </a>
@@ -234,7 +234,7 @@
         let recognition;
         let isRecording = false;
         let isPaused = false;
-        let finalTranscript = ''; // تخزين النصوص النهائية الثابتة فقط (الكود الأصلي الخاص بك)
+        let finalTranscript = ''; // الكود الأصلي الخاص بك للتسجيل
         let voiceSampleFile = null;
         let voices = [];
 
@@ -296,7 +296,7 @@
             document.getElementById('toastAlert').classList.add('hidden');
         }
 
-        // --- الخاصة الأولى: تعديل الهمزات والتنسيق فقط بدون تغيير الصياغة ---
+        // --- ميزة تعديل الهمزات والتنسيق فقط (بدون أي تغيير للألفاظ أو الصياغة) ---
         function formatArabicTextOnly() {
             let text = sttOutput.value;
             if (!text.trim()) {
@@ -304,7 +304,6 @@
                 return;
             }
 
-            // تعديل الهمزات وتنظيم المسافات وعلامات الترقيم برمجياً بدقة دون المساس بالمحتوى
             text = text
                 .replace(/\bالي\b/g, 'إلى')
                 .replace(/\bإلى\b/g, 'إلى')
@@ -317,35 +316,27 @@
                 .replace(/\s+/g, ' ');
 
             sttOutput.value = text.trim();
-            finalTranscript = sttOutput.value; // تحديث النص النهائي للتسجيل
+            finalTranscript = sttOutput.value;
             showToast('تم تصحيح الهمزات والتنسيق بنجاح دون أي تغيير بالكلمات.', 'success');
         }
 
-        // --- الخاصة الثانية: رفع ملف صوتي جاهز لتفريغه ---
-        function transcribeAudioFile(e) {
+        // --- ميزة تشغيل ملف صوتي جاهز للاستماع جنباً إلى جنب مع التسجيل ---
+        function playExternalAudioFile(e) {
             const file = e.target.files[0];
             if (!file) return;
-
-            showToast('جاري تشغيل الملف الصوتي لتفريغه...', 'warning');
-            const tempAudio = new Audio(URL.createObjectURL(file));
-            
-            tempAudio.onplay = () => {
-                if (!isRecording) startSTT();
-            };
-            tempAudio.onended = () => {
-                stopSTT();
-                showToast('تم الانتهاء من تشغيل الملف الصوتي بنجاح!', 'success');
-            };
-            tempAudio.play().catch(err => {
-                showToast('يرجى النقر لبدء تشغيل وتفريغ الملف.', 'warning');
+            const audioUrl = URL.createObjectURL(file);
+            const helperAudio = new Audio(audioUrl);
+            showToast('تم تحميل الملف، اضغط على بدء التسجيل للاستماع وتفريغه عبر الميكروفون.', 'success');
+            helperAudio.play().catch(e => {
+                console.log("Audio play deferred");
             });
         }
 
-        // --- الكود الأصلي للتسجيل المستقر (من الكود الذي اعتمدته) ---
+        // --- الكود الأصلي 100% للتسجيل (المعتمد لديك والذي لا يحتوي على أي أخطاء) ---
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.continuous = true;
-            recognition.interimResults = false; // تعطيل النتائج المؤقتة لمنع التكرار
+            recognition.interimResults = false;
 
             recognition.onstart = () => {
                 isRecording = true;
