@@ -115,7 +115,7 @@
                     <textarea id="sttOutput" class="w-full h-32 bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition leading-relaxed resize-y" placeholder="سيظهر النص المكتوب هنا تلقائياً أثناء حديثك..."></textarea>
                 </div>
 
-                <!-- أزرار القسم الأول مع إضافة زر التنسيق فقط دون مساس بالكود الأصلي -->
+                <!-- أزرار القسم الأول مع إضافة زر التنسيق فقط -->
                 <div class="flex flex-wrap gap-3 pt-2">
                     <button onclick="formatArabicTextOnly()" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 px-4 rounded-xl transition shadow-lg shadow-purple-600/20 active:scale-95 text-sm">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -226,7 +226,7 @@
         let recognition;
         let isRecording = false;
         let isPaused = false;
-        let finalTranscript = ''; // تخزين النصوص النهائية الثابتة فقط (الكود الأصلي تماماً)
+        let finalTranscript = ''; 
         let voiceSampleFile = null;
         let voices = [];
 
@@ -288,7 +288,7 @@
             document.getElementById('toastAlert').classList.add('hidden');
         }
 
-        // --- دالة تنسيق الهمزات فقط بدون أي تغيير للألفاظ أو الصياغة الأصلية ---
+        // --- دالة تنسيق الهمزات والترقيم الجديدة فقط ---
         function formatArabicTextOnly() {
             let text = sttOutput.value;
             if (!text.trim()) {
@@ -298,7 +298,6 @@
 
             text = text
                 .replace(/\bالي\b/g, 'إلى')
-                .replace(/\bإلى\b/g, 'إلى')
                 .replace(/\bان\b/g, 'أن')
                 .replace(/\bانما\b/g, 'إنما')
                 .replace(/\bالا\b/g, 'إلا')
@@ -309,14 +308,14 @@
 
             sttOutput.value = text.trim();
             finalTranscript = sttOutput.value;
-            showToast('تم تصحيح الهمزات والتنسيق بنجاح دون أي تغيير بالكلمات.', 'success');
+            showToast('تم تعديل الهمزات والتنسيق بنجاح دون تغيير النص.', 'success');
         }
 
-        // --- كود التسجيل الأصلي 100% كما طلبت تماماً ---
+        // --- كود التسجيل الأصلي 100% تماماً كما أرسلته أنت ---
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.continuous = true;
-            recognition.interimResults = false; // تعطيل النتائج المؤقتة تماماً على الجوال لمنع تكرار الجمل
+            recognition.interimResults = false; 
 
             recognition.onstart = () => {
                 isRecording = true;
@@ -338,7 +337,6 @@
                 sttBadge.className = "text-xs px-2.5 py-1 rounded-md bg-red-950 text-red-300 border border-red-800";
             };
 
-            // معالجة النتائج النهائية فقط لمنع التكرار على الهواتف بشكل تام
             recognition.onresult = (e) => {
                 let currentText = '';
                 for (let i = e.resultIndex; i < e.results.length; ++i) {
@@ -347,7 +345,6 @@
                 
                 let cleanText = currentText.trim();
                 if (cleanText) {
-                    // التحقق من عدم تكرار آخر جملة مضافة
                     if (!finalTranscript.endsWith(cleanText)) {
                         finalTranscript += (finalTranscript ? ' ' : '') + cleanText;
                         sttOutput.value = finalTranscript;
@@ -520,7 +517,7 @@
             const sampleUrl = URL.createObjectURL(voiceSampleFile);
             exportPlayer.src = sampleUrl;
             downloadBtn.href = sampleUrl;
-            downloadBtn.download = "VoiceLinguist_Output.wav";
+            downloadBtn.download = "VoiceLinguist_Generated_Audio.wav";
 
             exportBox.classList.remove('hidden');
             exportBox.scrollIntoView({ behavior: 'smooth' });
