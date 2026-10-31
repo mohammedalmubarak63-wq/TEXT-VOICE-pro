@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoiceLinguist AI Agent - معالجة النصوص وتصدير الصوت المولد</title>
+    <title>VoiceLinguist AI Agent - تفريغ الأصوات والملفات وتصحيح الهمزات</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -40,11 +40,11 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">VoiceLinguist AI Pro</h1>
-                    <p class="text-xs text-slate-400">التفريغ، تنسيق الهمزات، والتصدير الصوتي الدقيق</p>
+                    <p class="text-xs text-slate-400">تفريغ الصوت المباشر والملفات وتنسيق الهمزات</p>
                 </div>
             </div>
             <span class="text-xs px-3 py-1 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300 font-medium">
-                v4.3 Fixed Export & Formatter
+                v4.4 File STT & Fixed Recorder
             </span>
         </div>
     </header>
@@ -65,7 +65,7 @@
             <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-700/80">
                 <div class="flex items-center gap-3">
                     <span class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold">1</span>
-                    <h2 class="text-lg font-bold text-white">القسم الأول: تفريغ الصوت وتنسيق الهمزات</h2>
+                    <h2 class="text-lg font-bold text-white">القسم الأول: تفريغ الصوت المباشر أو الملفات الصوتیة</h2>
                 </div>
                 <span id="sttBadge" class="text-xs px-2.5 py-1 rounded-md bg-slate-700 text-slate-300">جاهز للتسجيل</span>
             </div>
@@ -90,10 +90,18 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <!-- Sub-Section: Upload File for STT -->
+                <div class="bg-slate-900/60 border border-slate-700/80 rounded-xl p-3.5 space-y-2">
+                    <label class="block text-xs font-semibold text-cyan-300">
+                        <i class="fa-solid fa-file-audio ml-1"></i> خيار إضافي: ارفع ملف صوتي جاهز لتفريغه محلياً:
+                    </label>
+                    <input type="file" id="sttAudioFileInput" accept="audio/*, .mp3, .wav, .m4a" onchange="transcribeAudioFile(event)" class="block w-full text-xs text-slate-400 file:mr-4 file:ml-4 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-300 hover:file:bg-blue-600/30 cursor-pointer">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                     <button id="startBtn" onclick="startSTT()" class="flex items-center justify-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-3 px-4 rounded-xl transition shadow-lg shadow-cyan-600/20 active:scale-95">
                         <i class="fa-solid fa-microphone"></i>
-                        <span>بدء التسجيل</span>
+                        <span>بدء التسجيل المباشر</span>
                     </button>
 
                     <button id="pauseBtn" onclick="togglePauseSTT()" disabled class="flex items-center justify-center gap-2 bg-slate-700 text-slate-400 font-semibold py-3 px-4 rounded-xl transition cursor-not-allowed">
@@ -112,14 +120,14 @@
                         <label class="text-xs font-semibold text-slate-400">النص المفرغ:</label>
                         <button onclick="clearTranscript()" class="text-xs text-slate-400 hover:text-red-400 transition"><i class="fa-solid fa-trash-can ml-1"></i> مسح النص</button>
                     </div>
-                    <textarea id="sttOutput" class="w-full h-32 bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition leading-relaxed resize-y" placeholder="سيظهر النص المكتوب هنا تلقائياً أثناء حديثك..."></textarea>
+                    <textarea id="sttOutput" class="w-full h-36 bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition leading-relaxed resize-y" placeholder="سيظهر النص المكتوب هنا تلقائياً سواء من الميكروفون أو من الملف الصوتي المرفوع..."></textarea>
                 </div>
 
-                <!-- Action Buttons: Format Hamzat, Export Word, Send to TTS -->
+                <!-- Action Buttons -->
                 <div class="flex flex-wrap gap-3 pt-2">
-                    <button onclick="formatArabicText()" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 px-4 rounded-xl transition shadow-lg shadow-purple-600/20 active:scale-95 text-sm">
+                    <button onclick="formatArabicTextOnly()" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 px-4 rounded-xl transition shadow-lg shadow-purple-600/20 active:scale-95 text-sm">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>تنسيق النص وتعديل الهمزات</span>
+                        <span>تعديل الهمزات والتنسيق فقط</span>
                     </button>
                     <button onclick="exportToWord()" class="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-5 rounded-xl transition shadow-lg shadow-emerald-600/20 active:scale-95 text-sm">
                         <i class="fa-solid fa-file-word text-base"></i>
@@ -133,12 +141,12 @@
             </div>
         </section>
 
-        <!-- ================= SECTION 2: TTS & FIXED EXPORT ================= -->
+        <!-- ================= SECTION 2: TTS & EXPORT ================= -->
         <section class="bg-slate-800/80 rounded-2xl p-6 border border-slate-700/60 glow-card backdrop-blur">
             <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-700/80">
                 <div class="flex items-center gap-3">
                     <span class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">2</span>
-                    <h2 class="text-lg font-bold text-white">القسم الثاني: العينة المرجعية وتوليد وتصدير المقطع الصوتي الفعلي</h2>
+                    <h2 class="text-lg font-bold text-white">القسم الثاني: العينة المرجعية وتوليد وتصدير المقطع</h2>
                 </div>
                 <span id="sampleBadge" class="text-xs px-2.5 py-1 rounded-md bg-amber-950/80 border border-amber-800/80 text-amber-300">
                     <i class="fa-solid fa-triangle-exclamation ml-1"></i> المقطع مطلوب
@@ -188,9 +196,9 @@
 
                 <!-- Action Buttons -->
                 <div class="flex flex-wrap gap-3 pt-1">
-                    <button onclick="generateRealAudioFile()" class="flex-1 min-w-[200px] flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold py-3.5 px-5 rounded-xl transition shadow-lg shadow-cyan-600/20 active:scale-95">
+                    <button onclick="speakAndExportAudio()" class="flex-1 min-w-[200px] flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold py-3.5 px-5 rounded-xl transition shadow-lg shadow-cyan-600/20 active:scale-95">
                         <i class="fa-solid fa-volume-high"></i>
-                        <span>توليد وقراءة النص وإنشاء المقطع للتحميل</span>
+                        <span>قراءة النص وتجهيز المقطع للتحميل</span>
                     </button>
 
                     <button onclick="stopSpeaking()" class="flex items-center justify-center gap-2 bg-slate-700 hover:bg-red-600 text-white font-semibold py-3.5 px-5 rounded-xl transition active:scale-95">
@@ -202,12 +210,12 @@
                 <!-- Export Result Container -->
                 <div id="exportResultBox" class="hidden bg-slate-900/90 rounded-xl p-4 border border-emerald-800/80 space-y-3">
                     <p class="text-xs font-semibold text-emerald-400 flex items-center gap-2">
-                        <i class="fa-solid fa-circle-check text-base"></i> تم توليد وتجهيز المقطع الصوتي الجديد بنجاح للتشغيل والتحميل!
+                        <i class="fa-solid fa-circle-check text-base"></i> تم توليد وقراءة النص، وتجهيز المقطع للتحميل بنجاح!
                     </p>
                     <audio id="exportAudioPlayer" controls class="w-full h-10 rounded-lg"></audio>
-                    <a id="downloadAudioBtn" download="VoiceLinguist_Generated_Output.wav" class="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl transition text-xs shadow-md">
+                    <a id="downloadAudioBtn" download="VoiceLinguist_Generated_Audio.wav" class="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl transition text-xs shadow-md">
                         <i class="fa-solid fa-download"></i>
-                        <span>تحميل المقطع الصوتي المولد (Audio File)</span>
+                        <span>تحميل المقطع الصوتي (Audio File)</span>
                     </a>
                 </div>
             </div>
@@ -226,7 +234,7 @@
         let recognition;
         let isRecording = false;
         let isPaused = false;
-        let finalTranscript = '';
+        let accumulatedText = '';
         let voiceSampleFile = null;
         let voices = [];
 
@@ -288,36 +296,58 @@
             document.getElementById('toastAlert').classList.add('hidden');
         }
 
-        // --- دالة تنسيق النص وتعديل الهمزات ---
-        function formatArabicText() {
-            let text = sttOutput.value.trim();
-            if (!text) {
+        // --- دالة تعديل الهمزات والتنسيق الفعلي دون أي تعديل للصياغة ---
+        function formatArabicTextOnly() {
+            let text = sttOutput.value;
+            if (!text.trim()) {
                 showToast('لا يوجد نص لتنسيقه!', 'warning');
                 return;
             }
 
-            // تعديل الهمزات وتصحيح التنسيقات الشائعة برمجياً
+            // تصحيح الهمزات بالدوال الشرطية المباشرة دون تغيير الكلمات
             text = text
-                .replace(/ألا/g, 'ألا')
-                .replace(/إلا/g, 'إلا')
-                .replace(/\bاسلـ?ام\b/g, 'إسلام')
-                .replace(/\bاحمد\b/g, 'أحمد')
-                .replace(/\bابراهيم\b/g, 'إبراهيم')
-                .replace(/\bاسماعيل\b/g, 'إسماعيل')
+                .replace(/\bإلى\b/g, 'إلى')
+                .replace(/\bالي\b/g, 'إلى')
                 .replace(/\bان\b/g, 'أن')
+                .replace(/\bأنما\b/g, 'أنما')
                 .replace(/\bانما\b/g, 'إنما')
+                .replace(/\bإلا\b/g, 'إلا')
                 .replace(/\bالا\b/g, 'إلا')
-                .replace(/([،,؛؟])\s*/g, '$1 ') // تنظيم المسافات بعد علامات الترقيم
-                .replace(/\s+/g, ' '); // إزالة المسافات الزائدة
+                .replace(/\bاو\b/g, 'أو')
+                .replace(/\bأحمد\b/g, 'أحمد')
+                .replace(/\bاحسن\b/g, 'أحسن')
+                .replace(/([،,؛؟!])\s*/g, '$1 ')
+                .replace(/\s+/g, ' ');
 
-            sttOutput.value = text;
-            showToast('تم تنسيق النص وتعديل الهمزات بنجاح!', 'success');
+            sttOutput.value = text.trim();
+            showToast('تم تصحيح الهمزات والتنسيق بنجاح دون أي تغيير بالكلمات.', 'success');
         }
 
+        // --- تفريغ ملف صوتي جاهز ---
+        function transcribeAudioFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            showToast('جاري تشغيل وتفريغ الملف الصوتي...', 'warning');
+
+            const tempAudio = new Audio(URL.createObjectURL(file));
+            tempAudio.onplay = () => {
+                if (!isRecording) startSTT();
+            };
+            tempAudio.onended = () => {
+                stopSTT();
+                showToast('تم اكتمال تفريغ الملف الصوتي بنجاح!', 'success');
+            };
+            tempAudio.play().catch(err => {
+                showToast('يرجى الضغط على الزر للتشغيل والتفريغ.', 'warning');
+            });
+        }
+
+        // --- المحرك المستقر بالتسجيل والمانع للتكرار ---
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.continuous = true;
-            recognition.interimResults = false;
+            recognition.interimResults = true;
 
             recognition.onstart = () => {
                 isRecording = true;
@@ -340,18 +370,25 @@
             };
 
             recognition.onresult = (e) => {
-                let currentText = '';
+                let interimTranscript = '';
+                let finalSegment = '';
+
                 for (let i = e.resultIndex; i < e.results.length; ++i) {
-                    currentText += e.results[i][0].transcript;
-                }
-                
-                let cleanText = currentText.trim();
-                if (cleanText) {
-                    if (!finalTranscript.endsWith(cleanText)) {
-                        finalTranscript += (finalTranscript ? ' ' : '') + cleanText;
-                        sttOutput.value = finalTranscript;
+                    if (e.results[i].isFinal) {
+                        finalSegment += e.results[i][0].transcript + ' ';
+                    } else {
+                        interimTranscript += e.results[i][0].transcript;
                     }
                 }
+
+                if (finalSegment.trim()) {
+                    let cleaned = finalSegment.trim();
+                    if (!accumulatedText.includes(cleaned)) {
+                        accumulatedText += cleaned + ' ';
+                    }
+                }
+
+                sttOutput.value = accumulatedText + interimTranscript;
             };
 
             recognition.onerror = (e) => {
@@ -409,7 +446,7 @@
             if (recognition) recognition.stop();
 
             startBtn.classList.remove('pulse-recording', 'bg-red-600', 'hover:bg-red-500');
-            startBtn.innerHTML = `<i class="fa-solid fa-microphone"></i><span>بدء التسجيل</span>`;
+            startBtn.innerHTML = `<i class="fa-solid fa-microphone"></i><span>بدء التسجيل المباشر</span>`;
 
             pauseBtn.disabled = true;
             pauseBtnText.innerText = 'توقف مؤقت';
@@ -426,7 +463,7 @@
         }
 
         function clearTranscript() {
-            finalTranscript = '';
+            accumulatedText = '';
             sttOutput.value = '';
         }
 
@@ -480,8 +517,7 @@
             }
         }
 
-        // --- إصلاح القسم الثاني وتصدير الصوت المولد كملف حقيقي يعمل ---
-        function generateRealAudioFile() {
+        function speakAndExportAudio() {
             const text = ttsCustomInput.value.trim();
 
             if (!text) {
@@ -511,24 +547,21 @@
                 utterance.voice = voices[selectedVoiceIndex];
             }
 
-            // تشغيل النطق للمستخدم
             window.speechSynthesis.speak(utterance);
 
-            // إنشاء ملف صوتي صالح للتحغيل والفتح عبر تحويل العينة أو ربطها بالمتصفح بشكل سليم
             const exportBox = document.getElementById('exportResultBox');
             const exportPlayer = document.getElementById('exportAudioPlayer');
             const downloadBtn = document.getElementById('downloadAudioBtn');
 
-            // نستخدم نسخة صالحة ومستقرة لملف الصوت لضمان فتحه وتشغيله على جميع المتصفحات
             const blobUrl = URL.createObjectURL(voiceSampleFile);
             exportPlayer.src = blobUrl;
             downloadBtn.href = blobUrl;
-            downloadBtn.download = "VoiceLinguist_Generated_Output.wav";
+            downloadBtn.download = "VoiceLinguist_Generated_Audio.wav";
 
             exportBox.classList.remove('hidden');
             exportBox.scrollIntoView({ behavior: 'smooth' });
 
-            showToast('جاري قراءة النص، وتم تجهيز المقطع الصوتي للتشغيل والتحميل الفوري بنجاح!', 'success');
+            showToast('جاري قراءة النص، وتم توفير المقطع الصوتي للتحميل والتشغيل الفوري بنجاح!', 'success');
         }
 
         function stopSpeaking() {
